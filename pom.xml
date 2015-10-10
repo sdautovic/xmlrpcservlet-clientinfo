@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>hr.sdautovic.apache</groupId>
-  <artifactId>webserver-example</artifactId>
+  <artifactId>xmlrpcservlet</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
