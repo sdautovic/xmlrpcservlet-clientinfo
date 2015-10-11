@@ -1,6 +1,10 @@
 package hr.sdautovic.apache.webserver.example;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 import javax.servlet.ServletException;
 import org.apache.xmlrpc.XmlRpcException;
@@ -10,11 +14,12 @@ import hr.sdautovic.apache.webserver.xmlrpc.servlet.XmlRpcServletClientInfo;
 
 public class SimpleSSLXmlRpcServletExample {
 
-	public static void main(String[] args) throws XmlRpcException, ServletException, IOException {
+	public static void main(String[] args) throws XmlRpcException, ServletException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, CertificateException {
 		PropertyHandlerMapping phm = new PropertyHandlerMapping();
 		phm.addHandler("monitor", hr.sdautovic.apache.webserver.xmlrpc.handlers.ExampleXmlRpcHandler.class);
 		
-		SSLServletWebServer webServer = new SSLServletWebServer(new XmlRpcServletClientInfo(phm), 8443);		
+		SSLServletWebServer webServer = new SSLServletWebServer(new XmlRpcServletClientInfo(phm), 8443, 
+				"password", "/home/sdautovic/Documents/workspace/Optima/xmlrpcservlet-clientinfo/keystore.jks");		
 		webServer.start();
 	}
 
