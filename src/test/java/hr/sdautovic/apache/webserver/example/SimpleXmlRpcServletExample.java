@@ -13,7 +13,7 @@ public class SimpleXmlRpcServletExample {
 		PropertyHandlerMapping phm = new PropertyHandlerMapping();
 		phm.addHandler("monitor", hr.sdautovic.apache.webserver.xmlrpc.handlers.ExampleXmlRpcHandler.class);
 		
-		ServletWebServer webServer = new ServletWebServer(new XmlRpcServletClientInfo(phm), 8080);		
+		ServletWebServer webServer = new ServletWebServer(new XmlRpcServletClientInfo(phm), 8080);	
 		webServer.start();
 	}
 
