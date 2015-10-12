@@ -16,11 +16,12 @@ import hr.sdautovic.apache.webserver.xmlrpc.servlet.XmlRpcServletClientInfo;
 public class SimpleSSLXmlRpcServletExample {
 
 	public static void main(String[] args) throws XmlRpcException, ServletException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, CertificateException, UnrecoverableKeyException {
+		
 		PropertyHandlerMapping phm = new PropertyHandlerMapping();
 		phm.addHandler("monitor", hr.sdautovic.apache.webserver.xmlrpc.handlers.ExampleXmlRpcHandler.class);
 		
 		SSLServletWebServer webServer = new SSLServletWebServer(new XmlRpcServletClientInfo(phm), 8443, 
-				"optznj143ndrz", "/home/sdautovic/Documents/workspace/Optima/xmlrpcservlet-clientinfo/keystore.p12",
+				"password", "/home/sdautovic/Documents/workspace/Optima/xmlrpcservlet-clientinfo/certificate_howto/keystore.pkcs12",
 				"changeit", "/home/sdautovic/opt/java/jre/lib/security/cacerts");		
 		webServer.start();
 	}
