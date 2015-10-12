@@ -21,8 +21,7 @@ public class SimpleSSLXmlRpcServletExample {
 		phm.addHandler("monitor", hr.sdautovic.apache.webserver.xmlrpc.handlers.ExampleXmlRpcHandler.class);
 		
 		SSLServletWebServer webServer = new SSLServletWebServer(new XmlRpcServletClientInfo(phm), 8443, 
-				"password", "/home/sdautovic/Documents/workspace/Optima/xmlrpcservlet-clientinfo/certificate_howto/keystore.pkcs12",
-				"changeit", "/home/sdautovic/opt/java/jre/lib/security/cacerts");		
+				"password", "HOWTO/keystore.pkcs12", "changeit", "HOWTO/cacerts");		
 		webServer.start();
 	}
 
