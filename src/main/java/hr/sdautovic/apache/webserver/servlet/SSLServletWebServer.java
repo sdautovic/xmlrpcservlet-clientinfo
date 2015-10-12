@@ -10,6 +10,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -21,12 +22,12 @@ import javax.servlet.http.HttpServlet;
 import org.apache.xmlrpc.webserver.ServletWebServer;
 
 public class SSLServletWebServer extends ServletWebServer {
-	private String m_keyStorePassphrase = "";
 	private SSLServerSocketFactory m_sslSocketFactory = null;
 	
-	public SSLServletWebServer(HttpServlet pServlet, int pPort, String keyStorePassphrase, String keyStoreFile) throws ServletException, NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException, IOException, KeyManagementException {
+	public SSLServletWebServer(HttpServlet pServlet, int pPort, String privateKeyStorePassphrase, String privateKeyStoreFile, 
+			String trustedCrtKeyStorePassphrase, String trustedCrtKeyStoreFile) throws ServletException, NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException, IOException, KeyManagementException, UnrecoverableKeyException {
 		super(pServlet, pPort);
-	    this.m_sslSocketFactory = createSSLServerSocketFactory(keyStorePassphrase, keyStoreFile);
+		this.m_sslSocketFactory = createSSLServerSocketFactory(privateKeyStorePassphrase, privateKeyStoreFile, trustedCrtKeyStorePassphrase, trustedCrtKeyStoreFile);
 	}
 
 	@Override
@@ -35,19 +36,23 @@ public class SSLServletWebServer extends ServletWebServer {
 		return socket;
 	}
 	
-	private SSLServerSocketFactory createSSLServerSocketFactory(String keyStorePassphrase, String keyStoreFile) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException, IOException, KeyManagementException {
-		this.m_keyStorePassphrase = keyStorePassphrase;
-//	    KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+	private SSLServerSocketFactory createSSLServerSocketFactory(String privateKeyStorePassphrase, String privateKeyStoreFile,
+			String trustedCrtKeyStorePassphrase, String trustedCrtKeyStoreFile) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException, IOException, KeyManagementException, UnrecoverableKeyException {
 		
-	    KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-	    keyStore.load(new FileInputStream(keyStoreFile), this.m_keyStorePassphrase.toCharArray());
-	 
-	    TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-	    tmf.init(keyStore);
-	    
+		KeyStore keyStorePrivate = KeyStore.getInstance("PKCS12");
+		keyStorePrivate.load(new FileInputStream(privateKeyStoreFile), privateKeyStorePassphrase.toCharArray());
+		
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+		kmf.init(keyStorePrivate, privateKeyStorePassphrase.toCharArray());
+		
+		KeyStore keyStoreTrusted = KeyStore.getInstance("JKS");
+		keyStoreTrusted.load(new FileInputStream(trustedCrtKeyStoreFile), trustedCrtKeyStorePassphrase.toCharArray());
+		
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+		tmf.init(keyStoreTrusted);
+		
 		SSLContext ctx = SSLContext.getInstance("SSL");
-	    ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
-	    return ctx.getServerSocketFactory();
+		ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
+		return ctx.getServerSocketFactory();
 	}
 }
