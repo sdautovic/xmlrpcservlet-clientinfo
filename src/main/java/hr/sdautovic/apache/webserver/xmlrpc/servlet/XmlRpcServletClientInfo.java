@@ -20,7 +20,11 @@ public class XmlRpcServletClientInfo extends XmlRpcServlet {
 	private static ThreadLocal<ClientInfo> ms_clientInfo = new ThreadLocal<ClientInfo>();
 	
     public static ClientInfo getClientInfo() {
-        return ms_clientInfo.get();
+    	ClientInfo clientInfo = ms_clientInfo.get();
+    	if (clientInfo == null) {
+    		clientInfo = new ClientInfo("NOT-NETWORK-CONNECTION", -1);
+    	}
+        return clientInfo;
     }
     
 	public XmlRpcServletClientInfo(PropertyHandlerMapping propertyHandlerMapping) {
